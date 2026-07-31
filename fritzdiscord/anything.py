@@ -13,6 +13,16 @@ import sys
 
 class bot():
     def __init__(self, token :str = "", sbot :bool = False, compression :bool = False, safe_token :bool = False, log_messages :bool = True) -> None:
+        self.hello_event = None
+        self.last_sequence_number = None
+        self.heartbeat_thread = None
+        self.heartbeat_interval = None
+        self.ws = None
+        self.event_data = None
+        self.input_thread = None
+        self.connected = False
+        self.normal_disconnect = None
+        self.event = None
         self.pending_heartbeat_ack = None
         self.token = token
         self.debug = False
@@ -150,10 +160,6 @@ class bot():
         self.hello_event = self.recieve_json_response()
         print(self.hello_event)
         self.heartbeat_interval = self.hello_event["d"]["heartbeat_interval"]
-        try:
-            self.last_sequence_number = self.hello_event["s"]
-        except Exception:
-            pass
 
         self.connected = True
         self.wait = False
@@ -165,7 +171,7 @@ class bot():
         if not self.sbot:
             identify_data = {
               "token": self.token,
-              "intents": 1 << 9 | 1 << 15 | 1 << 12,
+              "intents": 1 << 9 | 1 << 15 | 1 << 12 | 1 << 7,
               "properties": {
                 "os": "linux",
                 "browser": "Fitzie_Ficies",
@@ -240,8 +246,10 @@ class bot():
 
 
         # file = open(3, "wb", buffering=0)
-        class file():
+        class file:
+            @staticmethod
             def write(data :bytes): print(data.decode("utf-8"), end="")
+            @staticmethod
             def close(): pass
 
 
@@ -346,7 +354,7 @@ class bot():
             if self.sbot: continue
             self.ws = websocket.WebSocket()
             self.ws.connect(self.ready_event["d"]["resume_gateway_url"])
-            self.heartbeat_interbal = self.recieve_json_response()["d"]["heartbeat_interval"]
+            self.heartbeat_interval = self.recieve_json_response()["d"]["heartbeat_interval"]
             self.heartbeat_thread = threading.Thread(target=self.send_heartbeats)
             self.heartbeat_thread.start()
             self.send_json_request({
