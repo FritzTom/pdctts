@@ -5,7 +5,7 @@ from pyaudio import PyAudio as pyaudio
 PyAudio = pyaudio()
 
 def main():
-    voice = PiperVoice.load("./en_US-ryan-high.onnx")
+    voice = PiperVoice.load("./tts/en_US-ryan-high.onnx")
     device = get_device()
     # while True:
     #     device.write(random.randbytes(100000))

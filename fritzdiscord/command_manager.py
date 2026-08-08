@@ -1,13 +1,13 @@
 import requests
 
-def add_command(token :str, application_id :str, name :str, type :int, description :str, options :list) -> str:
+def add_command(token :str, application_id :str, name :str, type :int, description :str|None = None, options :list|None = None) -> str:
     url = f"https://discord.com/api/v9/applications/{application_id}/commands"
     json = {
         "name": name,
-        "type": type,
-        "description": description,
-        "options": options
+        "type": type
     }
+    if description is not None: json["description"] = description
+    if options is not None: json["options"] = options
     headers = {"Authorization": f"Bot {token}"}
     res = requests.post(url, headers=headers, json=json)
     data = res.json()

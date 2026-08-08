@@ -1,17 +1,14 @@
 
-
-
 import websocket
 import threading
 import random
-import socket
 import json
 import time
 import zlib
 import sys
 
 
-class bot():
+class bot:
     def __init__(self, token :str = "", sbot :bool = False, compression :bool = False, safe_token :bool = False, log_messages :bool = True) -> None:
         self.hello_event = None
         self.last_sequence_number = None
@@ -384,15 +381,15 @@ class bot():
 
 
     def start(self):
-        '''Start the bot in a new thread you can use stop function to stop the bot.'''
+        """Start the bot in a new thread you can use stop function to stop the bot."""
 
         self.most_important = threading.Thread(target=self.main)
         self.most_important.start()
         return
 
     def stop(self):
-        '''Stop the bot, only use this in combination with start function.
-        Will wait until the bot has stopped.'''
+        """Stop the bot, only use this in combination with start function.
+        Will wait until the bot has stopped."""
         
         self.connected = False
         self.most_important.join()

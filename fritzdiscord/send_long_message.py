@@ -1,14 +1,7 @@
-import requests
 
-def send_long_message(message, channel_id):
-    
-    file = open("./token", "r")
-    token = file.read().strip()
-    file.close()
+def make_long_message(message):
 
-
-
-    data = """--boundary
+    data = """--ajrxovpynwjszirwm
 Content-Disposition: form-data; name="payload_json"
 Content-Type: application/json
 
@@ -20,17 +13,9 @@ Content-Type: application/json
       "filename": "message.txt"
   }]
 }
---boundary
+--ajrxovpynwjszirwm
 Content-Disposition: form-data; name="files[0]"; filename="message.txt"
 Content-Type: text/plain
 
 """
-
-
-
-
-
-
-
-    res = requests.post(f"https://discord.com/api/v9/channels/{channel_id}/messages", headers={"Authorization":  token, "Content-type": "multipart/form-data; boundary=boundary"}, data=data + message + "\n--boundary--")
-    return res.text
+    return "multipart/form-data; boundary=ajrxovpynwjszirwm", data + message + "\n--ajrxovpynwjszirwm--"
