@@ -6,7 +6,8 @@ from dotenv import load_dotenv
 from os import environ, unlink
 import threading
 import requests
-import socket
+import vc
+
 load_dotenv()
 
 model_size = "large-v3-turbo"
@@ -24,12 +25,11 @@ commands:
 
 @bot.bot_ready_decorator
 def ready(self):
-    return
     self.send_json_request({
         "op": 4,
         "d": {
             "guild_id": "1391527917518848144",
-            "channel_id": "1391527918689194138",
+            "channel_id": "1391537542637158451",
             "self_mute": True,
             "self_deaf": True
         }
@@ -40,7 +40,15 @@ def voice_server_update(self, event):
     data = event["data"]
     token = data["token"]
     endpoint = data["endpoint"]
-    print(token, endpoint)
+    guild_id = data["guild_id"]
+    vc.handle_data(environ["APPLICATION_ID"], None, token, endpoint, guild_id)
+    return True
+
+@bot.decorator_wrapper(type="VOICE_STATE_UPDATE")
+def voice_state_update(self, event):
+    data = event["data"]
+    if data["user_id"] != environ["APPLICATION_ID"]: return False
+    vc.handle_data(data["user_id"], data["session_id"], None, None, data.get("guild_id"))
     return True
 
 def transcribe(token, url):
